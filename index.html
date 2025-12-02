@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPL Live Tracker</title>
+    <style>
+        /* SAME CSS AS BEFORE - PASTED HERE FOR CONVENIENCE */
+        :root { --fpl-purple: #37003c; --fpl-green: #00ff87; --fpl-pink: #e90052; --bg-dark: #1e1e1e; --card-bg: #2d2d2d; --text-light: #ffffff; --text-gray: #a0a0a0; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-dark); color: var(--text-light); margin: 0; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--fpl-green); padding-bottom: 20px; }
+        h1 { color: var(--fpl-green); margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .status { font-size: 0.9em; color: var(--text-gray); margin-top: 5px; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .team-card { background-color: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #333; transition: transform 0.2s; }
+        .team-card:hover { transform: translateY(-3px); border-color: var(--fpl-green); }
+        .card-header { background-color: var(--fpl-purple); padding: 12px 15px; border-left: 4px solid var(--fpl-pink); }
+        .team-name { font-size: 1.1em; font-weight: bold; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .manager-name { font-size: 0.85em; color: var(--text-gray); }
+        .score-box { display: flex; justify-content: space-between; padding: 15px; background: linear-gradient(to right, #2d2d2d, #353535); }
+        .stat { text-align: center; flex: 1; }
+        .stat-value { font-size: 1.6em; font-weight: bold; color: var(--fpl-green); }
+        .stat-label { font-size: 0.75em; color: var(--text-gray); text-transform: uppercase; }
+        .captain-info { padding: 12px 15px; background-color: rgba(0,0,0,0.2); font-size: 0.85em; display: flex; justify-content: space-between; color: var(--text-gray); }
+        .captain-name { color: #fff; font-weight: 500; }
+        .loading, .error { text-align: center; padding: 50px; grid-column: 1 / -1; }
+        .error { color: var(--fpl-pink); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Live Leaderboard</h1>
+        <div id="gameweek-info" class="status">Connecting to Vercel API...</div>
+    </header>
+    <div id="dashboard" class="dashboard">
+        <div class="loading">Fetching data...</div>
+    </div>
+</div>
+
+<script>
+    // --- Configuration ---
+    const TARGET_IDS = [210891, 733181, 3965890, 733812, 425659, 2154514, 423997];
+    
+    // WE NOW USE OUR OWN VERCEL FUNCTION
+    const API_BASE = "/api/proxy?endpoint=";
+
+    let staticData, liveData, currentGW;
+
+    async function fetchFPL(endpoint) {
+        // Calls our local /api/proxy function which talks to FPL
+        const response = await fetch(`${API_BASE}${encodeURIComponent(endpoint)}`);
+        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+        return await response.json();
+    }
+
+    async function init() {
+        const dashboard = document.getElementById('dashboard');
+        const status = document.getElementById('gameweek-info');
+
+        try {
+            staticData = await fetchFPL('/bootstrap-static/');
+            
+            const currentEvent = staticData.events.find(e => e.is_current) || staticData.events.find(e => e.is_next);
+            currentGW = currentEvent.id; // Fallback logic handled in loop if needed
+            
+            // If current event is finished, we might want to check the *next* one or stick to this one
+            // Ideally we check if 'is_current' exists.
+            
+            status.innerHTML = `Gameweek ${currentGW} &bull; ${currentEvent.finished ? 'Finished' : 'Live'}`;
+            liveData = await fetchFPL(`/event/${currentGW}/live/`);
+
+            const teamPromises = TARGET_IDS.map(id => buildTeamData(id));
+            const teams = await Promise.all(teamPromises);
+            teams.sort((a, b) => b.gwPoints - a.gwPoints);
+
+            dashboard.innerHTML = '';
+            teams.forEach(team => dashboard.innerHTML += renderTeamCard(team));
+
+        } catch (err) {
+            console.error(err);
+            dashboard.innerHTML = `<div class="error"><h3>Error</h3><p>${err.message}</p></div>`;
+        }
+    }
+
+    async function buildTeamData(managerId) {
+        try {
+            const entry = await fetchFPL(`/entry/${managerId}/`);
+            const picksData = await fetchFPL(`/entry/${managerId}/event/${currentGW}/picks/`);
+            
+            let gwPoints = 0, captainName = "-", captainPoints = 0;
+
+            picksData.picks.forEach(pick => {
+                const playerLive = liveData.elements.find(el => el.id === pick.element);
+                const points = playerLive ? playerLive.stats.total_points : 0;
+                gwPoints += (points * pick.multiplier);
+
+                if (pick.is_captain) {
+                    const pStatic = staticData.elements.find(el => el.id === pick.element);
+                    captainName = pStatic ? pStatic.web_name : "Unknown";
+                    captainPoints = points * pick.multiplier;
+                }
+            });
+
+            return {
+                id: managerId,
+                name: entry.name,
+                manager: `${entry.player_first_name} ${entry.player_last_name}`,
+                gwPoints: gwPoints - picksData.entry_history.event_transfers_cost,
+                totalPoints: entry.summary_overall_points + (gwPoints - picksData.entry_history.event_transfers_cost - (entry.summary_event_points || 0)),
+                rank: entry.summary_overall_rank,
+                captain: captainName,
+                captainPts: captainPoints
+            };
+        } catch (e) {
+            return { id: managerId, name: "Error", manager: "ID: " + managerId, gwPoints: 0, totalPoints: 0, error: true };
+        }
+    }
+
+    function renderTeamCard(t) {
+        if(t.error) return `<div class="team-card"><div class="card-header" style="background:#e90052">Error: ${t.id}</div></div>`;
+        return `<div class="team-card"><div class="card-header"><span class="team-name">${t.name}</span><span class="manager-name">${t.manager}</span></div><div class="score-box"><div class="stat"><div class="stat-value">${t.gwPoints}</div><div class="stat-label">Live</div></div><div class="stat"><div class="stat-value">${t.totalPoints}</div><div class="stat-label">Total</div></div><div class="stat"><div class="stat-value">${t.rank ? t.rank.toLocaleString() : '-'}</div><div class="stat-label">Rank</div></div></div><div class="captain-info"><span>© ${t.captain}</span><span>${t.captainPts} pts</span></div></div>`;
+    }
+
+    init();
+</script>
+</body>
+</html>
