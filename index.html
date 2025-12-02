@@ -3,128 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FPL Live Tracker</title>
+    <title>FPL Live Hub</title>
     <style>
-        /* SAME CSS AS BEFORE - PASTED HERE FOR CONVENIENCE */
-        :root { --fpl-purple: #37003c; --fpl-green: #00ff87; --fpl-pink: #e90052; --bg-dark: #1e1e1e; --card-bg: #2d2d2d; --text-light: #ffffff; --text-gray: #a0a0a0; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-dark); color: var(--text-light); margin: 0; padding: 20px; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--fpl-green); padding-bottom: 20px; }
-        h1 { color: var(--fpl-green); margin: 0; text-transform: uppercase; letter-spacing: 1px; }
-        .status { font-size: 0.9em; color: var(--text-gray); margin-top: 5px; }
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .team-card { background-color: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #333; transition: transform 0.2s; }
-        .team-card:hover { transform: translateY(-3px); border-color: var(--fpl-green); }
-        .card-header { background-color: var(--fpl-purple); padding: 12px 15px; border-left: 4px solid var(--fpl-pink); }
-        .team-name { font-size: 1.1em; font-weight: bold; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .manager-name { font-size: 0.85em; color: var(--text-gray); }
-        .score-box { display: flex; justify-content: space-between; padding: 15px; background: linear-gradient(to right, #2d2d2d, #353535); }
-        .stat { text-align: center; flex: 1; }
-        .stat-value { font-size: 1.6em; font-weight: bold; color: var(--fpl-green); }
-        .stat-label { font-size: 0.75em; color: var(--text-gray); text-transform: uppercase; }
-        .captain-info { padding: 12px 15px; background-color: rgba(0,0,0,0.2); font-size: 0.85em; display: flex; justify-content: space-between; color: var(--text-gray); }
-        .captain-name { color: #fff; font-weight: 500; }
-        .loading, .error { text-align: center; padding: 50px; grid-column: 1 / -1; }
-        .error { color: var(--fpl-pink); }
+        :root {
+            --bg-dark: #121212;
+            --surface: #1e1e1e;
+            --surface-2: #2c2c2c;
+            --primary: #00ff87; /* FPL Green */
+            --secondary: #e90052; /* FPL Pink */
+            --accent: #38003c; /* FPL Purple */
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            background-image: radial-gradient(circle at top right, #38003c 0%, #121212 40%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Header Area */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        h1 { margin: 0; font-size: 1.5rem; letter-spacing: -0.5px; }
+        .live-indicator { color: var(--secondary); font-weight: bold; font-size: 0.8rem; text-transform: uppercase; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* Grid Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        /* Card Design */
+        .team-card {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        /* Card Header */
+        .card-header {
+            background: linear-gradient(90deg, var(--accent) 0%, #1a1a1a 100%);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .manager-info h2 { margin: 0; font-size: 1.1rem; }
+        .manager-info span { font-size: 0.85rem; color: var(--text-dim); }
+        
+        .external-link {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.8rem;
+            border: 1px solid #444;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .external-link:hover { color: var(--primary); border-color: var(--primary); }
+
+        /* Stats Bar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            background: var(--surface-2);
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .stat-item { text-align: center; border-right: 1px solid #3c3c3c; }
+        .stat-item:last-child { border-right: none; }
+        .stat-val { font-size: 1.4rem; font-weight: 700; color: var(--primary); display: block; }
+        .stat-lbl { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Player List */
+        .player-list {
+            padding: 10px 0;
+            flex-grow: 1;
+        }
+
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 20px;
+            border-bottom: 1px solid #2a2a2a;
+            font-size: 0.9rem;
+        }
+        
+        .player-row:last-child { border-bottom: none; }
+        .player-row.bench { opacity: 0.5; font-size: 0.85rem; background: #161616; }
+        
+        .p-name { display: flex; align-items: center; gap: 8px; }
+        .p-pos { font-size: 0.7rem; color: var(--text-dim); width: 25px; }
+        .p-pts { font-weight: bold; color: var(--text-main); }
+        .captain-badge { background: var(--text-main); color: var(--bg-dark); font-size: 0.65rem; padding: 1px 4px; border-radius: 4px; font-weight: bold; }
+        .vice-badge { border: 1px solid var(--text-dim); color: var(--text-dim); font-size: 0.65rem; padding: 0 4px; border-radius: 4px; }
+
+        .loading, .error { grid-column: 1 / -1; text-align: center; padding: 50px; color: var(--text-dim); }
+        .error { color: var(--secondary); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Live Leaderboard</h1>
-        <div id="gameweek-info" class="status">Connecting to Vercel API...</div>
+        <div>
+            <h1>Mini-League Live</h1>
+            <div id="status" style="font-size: 0.85rem; color: #888; margin-top: 4px;">Initializing...</div>
+        </div>
+        <div class="live-indicator">● Live Updates</div>
     </header>
+
     <div id="dashboard" class="dashboard">
-        <div class="loading">Fetching data...</div>
+        <div class="loading">Loading league data...</div>
     </div>
 </div>
 
 <script>
     // --- Configuration ---
     const TARGET_IDS = [210891, 733181, 3965890, 733812, 425659, 2154514, 423997];
-    
-    // WE NOW USE OUR OWN VERCEL FUNCTION
-    const API_BASE = "/api/proxy?endpoint=";
+    const API_BASE = "/api/proxy?endpoint="; // Vercel Proxy
 
     let staticData, liveData, currentGW;
 
+    const POSITIONS = { 1: 'GKP', 2: 'DEF', 3: 'MID', 4: 'FWD' };
+
     async function fetchFPL(endpoint) {
-        // Calls our local /api/proxy function which talks to FPL
         const response = await fetch(`${API_BASE}${encodeURIComponent(endpoint)}`);
-        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+        if (!response.ok) throw new Error(`API Error`);
         return await response.json();
     }
 
     async function init() {
         const dashboard = document.getElementById('dashboard');
-        const status = document.getElementById('gameweek-info');
+        const statusDiv = document.getElementById('status');
 
         try {
+            // 1. Fetch Static Data (Players, Teams, Settings)
             staticData = await fetchFPL('/bootstrap-static/');
             
+            // 2. Identify Current Gameweek
             const currentEvent = staticData.events.find(e => e.is_current) || staticData.events.find(e => e.is_next);
-            currentGW = currentEvent.id; // Fallback logic handled in loop if needed
+            currentGW = currentEvent.id;
             
-            // If current event is finished, we might want to check the *next* one or stick to this one
-            // Ideally we check if 'is_current' exists.
-            
-            status.innerHTML = `Gameweek ${currentGW} &bull; ${currentEvent.finished ? 'Finished' : 'Live'}`;
+            statusDiv.innerHTML = `Gameweek ${currentGW} | ${currentEvent.finished ? 'Finished' : 'In Progress'}`;
+
+            // 3. Fetch Live Stats for this GW
             liveData = await fetchFPL(`/event/${currentGW}/live/`);
 
-            const teamPromises = TARGET_IDS.map(id => buildTeamData(id));
-            const teams = await Promise.all(teamPromises);
-            teams.sort((a, b) => b.gwPoints - a.gwPoints);
-
+            // 4. Build & Render Teams
             dashboard.innerHTML = '';
-            teams.forEach(team => dashboard.innerHTML += renderTeamCard(team));
+            const teams = await Promise.all(TARGET_IDS.map(id => buildTeamData(id)));
+            
+            // Sort by Live GW Points
+            teams.sort((a, b) => b.netGwPoints - a.netGwPoints);
+
+            teams.forEach(team => {
+                dashboard.innerHTML += renderTeamCard(team);
+            });
 
         } catch (err) {
             console.error(err);
-            dashboard.innerHTML = `<div class="error"><h3>Error</h3><p>${err.message}</p></div>`;
+            dashboard.innerHTML = `<div class="error">Failed to load data. Ensure /api/proxy.js is set up correctly on Vercel.<br>${err.message}</div>`;
         }
     }
 
     async function buildTeamData(managerId) {
         try {
-            const entry = await fetchFPL(`/entry/${managerId}/`);
-            const picksData = await fetchFPL(`/entry/${managerId}/event/${currentGW}/picks/`);
+            // Fetch Manager Info & Picks
+            const [entry, picksData, history] = await Promise.all([
+                fetchFPL(`/entry/${managerId}/`),
+                fetchFPL(`/entry/${managerId}/event/${currentGW}/picks/`),
+                fetchFPL(`/entry/${managerId}/history/`) // For exact ranks
+            ]);
             
-            let gwPoints = 0, captainName = "-", captainPoints = 0;
+            let rawPoints = 0;
+            const squad = [];
 
+            // Process Picks
             picksData.picks.forEach(pick => {
+                const playerStatic = staticData.elements.find(el => el.id === pick.element);
                 const playerLive = liveData.elements.find(el => el.id === pick.element);
-                const points = playerLive ? playerLive.stats.total_points : 0;
-                gwPoints += (points * pick.multiplier);
+                const stats = playerLive ? playerLive.stats : { total_points: 0 };
+                
+                const multiplier = pick.multiplier;
+                const points = stats.total_points * multiplier;
+                
+                if(multiplier > 0) rawPoints += points; // Only add active players
 
-                if (pick.is_captain) {
-                    const pStatic = staticData.elements.find(el => el.id === pick.element);
-                    captainName = pStatic ? pStatic.web_name : "Unknown";
-                    captainPoints = points * pick.multiplier;
-                }
+                squad.push({
+                    name: playerStatic.web_name,
+                    position: POSITIONS[playerStatic.element_type],
+                    points: points,
+                    rawPoints: stats.total_points, // Unmultiplied
+                    isCaptain: pick.is_captain,
+                    isVice: pick.is_vice_captain,
+                    isBench: multiplier === 0
+                });
             });
+
+            const transferCost = picksData.entry_history.event_transfers_cost;
+            
+            // Try to find live rank (often delayed in API) or use last known
+            const currentHistory = history.current.find(h => h.event === currentGW);
+            const overallRank = currentHistory ? currentHistory.overall_rank : entry.summary_overall_rank;
+            const gwRank = picksData.entry_history.rank ? picksData.entry_history.rank.toLocaleString() : '-';
 
             return {
                 id: managerId,
                 name: entry.name,
                 manager: `${entry.player_first_name} ${entry.player_last_name}`,
-                gwPoints: gwPoints - picksData.entry_history.event_transfers_cost,
-                totalPoints: entry.summary_overall_points + (gwPoints - picksData.entry_history.event_transfers_cost - (entry.summary_event_points || 0)),
-                rank: entry.summary_overall_rank,
-                captain: captainName,
-                captainPts: captainPoints
+                netGwPoints: rawPoints - transferCost,
+                totalPoints: entry.summary_overall_points + (rawPoints - transferCost - (entry.summary_event_points || 0)),
+                rank: overallRank,
+                gwRank: gwRank,
+                squad: squad
             };
+
         } catch (e) {
-            return { id: managerId, name: "Error", manager: "ID: " + managerId, gwPoints: 0, totalPoints: 0, error: true };
+            console.error(e);
+            return { error: true, id: managerId };
         }
     }
 
     function renderTeamCard(t) {
-        if(t.error) return `<div class="team-card"><div class="card-header" style="background:#e90052">Error: ${t.id}</div></div>`;
-        return `<div class="team-card"><div class="card-header"><span class="team-name">${t.name}</span><span class="manager-name">${t.manager}</span></div><div class="score-box"><div class="stat"><div class="stat-value">${t.gwPoints}</div><div class="stat-label">Live</div></div><div class="stat"><div class="stat-value">${t.totalPoints}</div><div class="stat-label">Total</div></div><div class="stat"><div class="stat-value">${t.rank ? t.rank.toLocaleString() : '-'}</div><div class="stat-label">Rank</div></div></div><div class="captain-info"><span>© ${t.captain}</span><span>${t.captainPts} pts</span></div></div>`;
+        if(t.error) return `<div class="team-card"><div class="card-header">Error loading ID: ${t.id}</div></div>`;
+
+        // Separate Starters and Bench
+        const starters = t.squad.filter(p => !p.isBench);
+        const bench = t.squad.filter(p => p.isBench);
+
+        let playersHTML = '';
+        
+        // Starters
+        starters.forEach(p => playersHTML += renderPlayerRow(p));
+        
+        // Bench Divider
+        if(bench.length > 0) {
+            playersHTML += `<div style="padding: 5px 20px; font-size: 0.7rem; color: #666; background: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">Bench</div>`;
+            bench.forEach(p => playersHTML += renderPlayerRow(p));
+        }
+
+        return `
+            <div class="team-card">
+                <div class="card-header">
+                    <div class="manager-info">
+                        <h2>${t.name}</h2>
+                        <span>${t.manager}</span>
+                    </div>
+                    <a href="https://fantasy.premierleague.com/entry/${t.id}/event/${currentGW}" target="_blank" class="external-link">
+                        FPL ↗
+                    </a>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-val">${t.netGwPoints}</span>
+                        <span class="stat-lbl">Live GW</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-val">${t.totalPoints}</span>
+                        <span class="stat-lbl">Total</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-val">${t.rank ? t.rank.toLocaleString() : '-'}</span>
+                        <span class="stat-lbl">OR Rank</span>
+                    </div>
+                </div>
+
+                <div class="player-list">
+                    ${playersHTML}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderPlayerRow(p) {
+        const badge = p.isCaptain ? '<span class="captain-badge">C</span>' : 
+                      p.isVice ? '<span class="vice-badge">V</span>' : '';
+        
+        const rowClass = p.isBench ? 'player-row bench' : 'player-row';
+        
+        // If captained, show total points including multiplier
+        const displayPoints = p.isCaptain ? `${p.points} (${p.rawPoints})` : p.points;
+
+        return `
+            <div class="${rowClass}">
+                <div class="p-name">
+                    <span class="p-pos">${p.position}</span>
+                    ${p.name} ${badge}
+                </div>
+                <div class="p-pts">${displayPoints}</div>
+            </div>
+        `;
     }
 
     init();
 </script>
+
 </body>
 </html>
