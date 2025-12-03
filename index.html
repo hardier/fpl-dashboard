@@ -28,7 +28,6 @@
 
         .container { max-width: 1400px; margin: 0 auto; }
 
-        /* Header */
         header {
             display: flex;
             justify-content: space-between;
@@ -50,14 +49,12 @@
             border: 1px solid rgba(0, 255, 135, 0.2);
         }
 
-        /* Grid */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 25px;
         }
 
-        /* Card Design */
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -68,10 +65,7 @@
             display: flex;
             flex-direction: column;
         }
-        .card:hover {
-            transform: translateY(-3px);
-            border-color: var(--green);
-        }
+        .card:hover { transform: translateY(-3px); border-color: var(--green); }
 
         .card-head {
             background: linear-gradient(to right, rgba(56, 0, 60, 0.6), rgba(30, 30, 36, 0.0));
@@ -84,6 +78,21 @@
 
         .team-info h2 { margin: 0; font-size: 1.1rem; }
         .manager-name { font-size: 0.85rem; color: var(--text-dim); display: block; margin-top: 2px; }
+
+        /* --- NEW: Chip Badge Style --- */
+        .chip-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            background: var(--pink);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 10px rgba(233, 0, 82, 0.4);
+        }
 
         .fpl-link {
             color: var(--text-dim);
@@ -107,7 +116,6 @@
         .score-val { font-size: 1.6rem; font-weight: 800; color: var(--green); display: block; }
         .score-lbl { font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
 
-        /* --- NEW: Transfer Section Styles --- */
         .transfer-section {
             background: rgba(0,0,0,0.3);
             padding: 10px 20px;
@@ -115,59 +123,38 @@
             font-size: 0.85rem;
         }
         .transfer-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 6px;
-            letter-spacing: 1px;
+            display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 1px;
         }
-        .transfer-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
+        .transfer-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
         .tx-in { color: var(--green); }
         .tx-out { color: var(--pink); text-decoration: line-through; opacity: 0.7; font-size: 0.9em;}
-        .cost-badge {
-            background: var(--pink);
-            color: white;
-            padding: 1px 6px;
-            border-radius: 4px;
-            font-size: 0.75em;
-            font-weight: bold;
-        }
+        .cost-badge { background: var(--pink); color: white; padding: 1px 6px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
         .no-transfers { color: var(--text-dim); font-style: italic; opacity: 0.5; }
-        /* ------------------------------------ */
 
         .player-list { padding: 10px 0; flex-grow: 1; }
         .player-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            font-size: 0.9rem;
+            display: flex; justify-content: space-between; padding: 8px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.9rem;
         }
         .player-row:last-child { border-bottom: none; }
         
         .bench { opacity: 0.5; background: rgba(0,0,0,0.2); }
         .bench-label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; padding: 5px 20px; background: rgba(0,0,0,0.3); margin-top: 5px; letter-spacing: 1px; }
 
+        /* --- Updated Captain Badges --- */
         .cap-badge { 
-            background: var(--text-main); 
-            color: var(--bg-dark); 
-            font-size: 0.7em; 
-            padding: 1px 5px; 
-            border-radius: 3px; 
-            font-weight: bold; 
-            margin-left: 6px; 
+            background: var(--text-main); color: var(--bg-dark); font-size: 0.7em; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-left: 6px; 
+        }
+        
+        /* TC Badge Style */
+        .tc-badge {
+            background: var(--pink);
+            color: white;
+            font-size: 0.7em; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-left: 6px; 
+            box-shadow: 0 0 5px rgba(233, 0, 82, 0.5);
         }
 
         .loading, .error { grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-dim); }
         .error { color: var(--pink); }
-
     </style>
 </head>
 <body>
@@ -186,6 +173,14 @@
 <script>
     const IDS = [210891, 733181, 3965890, 733812, 425659, 2154514, 423997];
     const PROXY_URL = "/api/proxy?endpoint=";
+    
+    // Chip Display Names
+    const CHIPS = {
+        '3xc': 'Triple Captain',
+        'bboost': 'Bench Boost',
+        'freehit': 'Free Hit',
+        'wildcard': 'Wildcard'
+    };
 
     async function getData(endpoint) {
         const response = await fetch(PROXY_URL + encodeURIComponent(endpoint));
@@ -198,28 +193,25 @@
         const statusEl = document.getElementById('status');
 
         try {
-            // 1. Get Context
             const staticData = await getData('/bootstrap-static/');
             const eventInfo = staticData.events.find(e => e.is_current) || staticData.events.find(e => e.is_next);
             const GW = eventInfo.id;
             
             statusEl.innerHTML = `Gameweek ${GW} • ${eventInfo.finished ? 'Finished' : 'Live'}`;
-
-            // 2. Get Live Stats
             const liveData = await getData(`/event/${GW}/live/`);
 
-            // 3. Process Teams
             grid.innerHTML = ''; 
             
             const teamPromises = IDS.map(async (managerId) => {
-                // Fetch Entry, Picks AND Transfers
                 const [entry, picks, transfersHistory] = await Promise.all([
                     getData(`/entry/${managerId}/`),
                     getData(`/entry/${managerId}/event/${GW}/picks/`),
                     getData(`/entry/${managerId}/transfers/`)
                 ]);
 
-                // --- Calculate Points ---
+                // --- Active Chip? ---
+                const activeChip = picks.active_chip; // '3xc', 'bboost', etc.
+
                 let gwScore = 0;
                 const squad = picks.picks.map(pick => {
                     const pStatic = staticData.elements.find(el => el.id === pick.element);
@@ -227,17 +219,19 @@
                     const rawPoints = pLive ? pLive.stats.total_points : 0;
                     const totalPoints = rawPoints * pick.multiplier;
                     if (pick.multiplier > 0) gwScore += totalPoints;
+                    
                     return {
                         name: pStatic.web_name,
                         points: totalPoints,
-                        isCap: pick.is_captain,
+                        // Logic: Captain if mult=2, TC if mult=3
+                        isCap: pick.multiplier === 2,
+                        isTC: pick.multiplier === 3,
                         isVice: pick.is_vice_captain,
                         mult: pick.multiplier
                     };
                 });
 
-                // --- Process Transfers ---
-                // Filter history for THIS gameweek only
+                // Transfers Logic
                 const currentTransfers = transfersHistory.filter(t => t.event === GW).map(t => {
                     return {
                         in: staticData.elements.find(el => el.id === t.element_in).web_name,
@@ -256,7 +250,8 @@
                     total: entry.summary_overall_points + (netScore - (entry.summary_event_points || 0)),
                     squad: squad,
                     transfers: currentTransfers,
-                    cost: cost
+                    cost: cost,
+                    chip: activeChip
                 };
             });
 
@@ -269,53 +264,44 @@
 
         } catch (error) {
             console.error(error);
-            grid.innerHTML = `<div class="error">
-                <h3>Connection Error</h3>
-                <p>Ensure your Vercel project has the 'api/proxy.js' file.</p>
-                <small>${error.message}</small>
-            </div>`;
+            grid.innerHTML = `<div class="error"><h3>Error</h3><p>${error.message}</p></div>`;
         }
     }
 
     function renderCard(team, gw) {
-        let playersHtml = '';
-        
-        // --- Render Transfers HTML ---
+        // --- Chip Label ---
+        let chipHtml = '';
+        if(team.chip && CHIPS[team.chip]) {
+            chipHtml = `<span class="chip-badge">${CHIPS[team.chip]}</span>`;
+        }
+
+        // --- Transfers ---
         let transferHtml = '';
         if(team.transfers.length > 0) {
             const costDisplay = team.cost > 0 ? `<span class="cost-badge">-${team.cost}</span>` : '<span>FREE</span>';
-            
             let moves = '';
             team.transfers.forEach(tx => {
-                moves += `
-                    <div class="transfer-row">
-                        <span class="tx-in">+ ${tx.in}</span>
-                        <span class="tx-out">${tx.out}</span>
-                    </div>`;
+                moves += `<div class="transfer-row"><span class="tx-in">+ ${tx.in}</span><span class="tx-out">${tx.out}</span></div>`;
             });
-
-            transferHtml = `
-                <div class="transfer-section">
-                    <div class="transfer-header">
-                        <span>Transfers (${team.transfers.length})</span>
-                        ${costDisplay}
-                    </div>
-                    ${moves}
-                </div>`;
+            transferHtml = `<div class="transfer-section"><div class="transfer-header"><span>Transfers</span>${costDisplay}</div>${moves}</div>`;
         } else {
-            // Optional: Show nothing if no transfers, or a subtle message
-             transferHtml = `<div class="transfer-section"><span class="no-transfers">No transfers made</span></div>`;
+             transferHtml = `<div class="transfer-section"><span class="no-transfers">No transfers</span></div>`;
         }
-        // -----------------------------
 
-        // Players
+        // --- Players ---
+        let playersHtml = '';
         const starters = team.squad.filter(p => p.mult > 0);
         const bench = team.squad.filter(p => p.mult === 0);
 
         starters.forEach(p => {
+            // Determine Badge: TC, C, or none
+            let badge = '';
+            if (p.isTC) badge = '<span class="tc-badge">TC</span>';
+            else if (p.isCap) badge = '<span class="cap-badge">C</span>';
+
             playersHtml += `
                 <div class="player-row">
-                    <span>${p.name} ${p.isCap ? '<span class="cap-badge">C</span>' : ''}</span>
+                    <span>${p.name} ${badge}</span>
                     <strong>${p.points}</strong>
                 </div>`;
         });
@@ -337,26 +323,19 @@
                     <div class="team-info">
                         <h2>${team.name}</h2>
                         <span class="manager-name">${team.manager}</span>
+                        ${chipHtml} 
                     </div>
                     <a href="https://fantasy.premierleague.com/entry/${team.id}/event/${gw}" target="_blank" class="fpl-link">FPL ↗</a>
                 </div>
                 
                 <div class="score-board">
-                    <div class="score-item">
-                        <span class="score-val">${team.score}</span>
-                        <span class="score-lbl">Live GW</span>
-                    </div>
-                    <div class="score-item">
-                        <span class="score-val">${team.total}</span>
-                        <span class="score-lbl">Total</span>
-                    </div>
+                    <div class="score-item"><span class="score-val">${team.score}</span><span class="score-lbl">Live GW</span></div>
+                    <div class="score-item"><span class="score-val">${team.total}</span><span class="score-lbl">Total</span></div>
                 </div>
 
                 ${transferHtml}
 
-                <div class="player-list">
-                    ${playersHtml}
-                </div>
+                <div class="player-list">${playersHtml}</div>
             </div>
         `;
     }
@@ -364,6 +343,5 @@
     init();
 
 </script>
-
 </body>
 </html>
