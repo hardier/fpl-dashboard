@@ -1,29 +1,28 @@
 // api/proxy.js
 export default async function handler(req, res) {
     const { endpoint } = req.query;
-    
+
     if (!endpoint) {
         return res.status(400).json({ error: 'Endpoint parameter is required' });
     }
 
+    const targetUrl = `https://fantasy.premierleague.com/api${endpoint}`;
+
     try {
-        // Fetch data from FPL API
-        // We add a User-Agent because FPL sometimes blocks generic requests
-        const response = await fetch(`https://fantasy.premierleague.com/api${endpoint}`, {
+        const response = await fetch(targetUrl, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'application/json',
+                'Referer': 'https://fantasy.premierleague.com/'
             }
         });
 
-        if (!response.ok) {
-            throw new Error(`FPL API responded with ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`FPL API Status: ${response.status}`);
 
         const data = await response.json();
-        
-        // Return data to your frontend
+
         res.status(200).json(data);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Failed to fetch data', details: error.message });
     }
 }
