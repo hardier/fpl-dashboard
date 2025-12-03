@@ -29,105 +29,79 @@
         .container { max-width: 1400px; margin: 0 auto; }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 30px;
         }
         
         h1 { margin: 0; font-size: 1.5rem; letter-spacing: -1px; }
         h1 span { color: var(--green); }
         
         .status-pill {
-            font-size: 0.8rem;
-            background: rgba(0, 255, 135, 0.1);
-            color: var(--green);
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 255, 135, 0.2);
+            font-size: 0.8rem; background: rgba(0, 255, 135, 0.1); color: var(--green);
+            padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(0, 255, 135, 0.2);
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
 
         .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: transform 0.2s, border-color 0.2s;
-            display: flex;
-            flex-direction: column;
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.2s, border-color 0.2s; display: flex; flex-direction: column;
         }
         .card:hover { transform: translateY(-3px); border-color: var(--green); }
 
         .card-head {
             background: linear-gradient(to right, rgba(56, 0, 60, 0.6), rgba(30, 30, 36, 0.0));
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 15px 20px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
         }
 
         .team-info h2 { margin: 0; font-size: 1.1rem; }
         .manager-name { font-size: 0.85rem; color: var(--text-dim); display: block; margin-top: 2px; }
 
-        /* --- NEW: Chip Badge Style --- */
         .chip-badge {
-            display: inline-block;
-            font-size: 0.65rem;
-            background: var(--pink);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            text-transform: uppercase;
-            font-weight: bold;
-            margin-top: 4px;
-            letter-spacing: 0.5px;
-            box-shadow: 0 0 10px rgba(233, 0, 82, 0.4);
+            display: inline-block; font-size: 0.65rem; background: var(--pink); color: white;
+            padding: 2px 8px; border-radius: 10px; text-transform: uppercase; font-weight: bold;
+            margin-top: 4px; letter-spacing: 0.5px; box-shadow: 0 0 10px rgba(233, 0, 82, 0.4);
         }
 
         .fpl-link {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 0.8rem;
-            background: rgba(255,255,255,0.05);
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: all 0.2s;
+            color: var(--text-dim); text-decoration: none; font-size: 0.8rem;
+            background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: 6px; transition: all 0.2s;
         }
         .fpl-link:hover { background: var(--purple); color: var(--text-main); }
 
         .score-board {
-            display: flex;
-            background: rgba(0,0,0,0.2);
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border);
+            display: flex; background: rgba(0,0,0,0.2); padding: 15px 0; border-bottom: 1px solid var(--border);
         }
         .score-item { flex: 1; text-align: center; border-right: 1px solid var(--border); }
         .score-item:last-child { border: none; }
         .score-val { font-size: 1.6rem; font-weight: 800; color: var(--green); display: block; }
         .score-lbl { font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
 
+        /* --- Updated Transfer Styles --- */
         .transfer-section {
-            background: rgba(0,0,0,0.3);
-            padding: 10px 20px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.85rem;
+            background: rgba(0,0,0,0.3); padding: 12px 20px; border-bottom: 1px solid var(--border); font-size: 0.85rem;
         }
         .transfer-header {
-            display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 1px;
+            display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; 
+            color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px;
         }
-        .transfer-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
-        .tx-in { color: var(--green); }
-        .tx-out { color: var(--pink); text-decoration: line-through; opacity: 0.7; font-size: 0.9em;}
+        .transfer-row { 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .transfer-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        
+        .tx-details { display: flex; flex-direction: column; gap: 2px; }
+        .tx-in { color: var(--green); font-weight: 500; }
+        .tx-out { color: var(--pink); font-size: 0.9em; opacity: 0.8; }
+        .tx-pts { font-size: 0.75em; opacity: 0.7; margin-left: 4px; font-weight: normal; }
+
+        .tx-gain { font-weight: bold; font-size: 0.9em; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.1); }
+        .gain-pos { color: var(--green); }
+        .gain-neg { color: var(--pink); }
+        .gain-neu { color: var(--text-dim); }
+
         .cost-badge { background: var(--pink); color: white; padding: 1px 6px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
         .no-transfers { color: var(--text-dim); font-style: italic; opacity: 0.5; }
 
@@ -140,18 +114,8 @@
         .bench { opacity: 0.5; background: rgba(0,0,0,0.2); }
         .bench-label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; padding: 5px 20px; background: rgba(0,0,0,0.3); margin-top: 5px; letter-spacing: 1px; }
 
-        /* --- Updated Captain Badges --- */
-        .cap-badge { 
-            background: var(--text-main); color: var(--bg-dark); font-size: 0.7em; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-left: 6px; 
-        }
-        
-        /* TC Badge Style */
-        .tc-badge {
-            background: var(--pink);
-            color: white;
-            font-size: 0.7em; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-left: 6px; 
-            box-shadow: 0 0 5px rgba(233, 0, 82, 0.5);
-        }
+        .cap-badge { background: var(--text-main); color: var(--bg-dark); font-size: 0.7em; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-left: 6px; }
+        .tc-badge { background: var(--pink); color: white; font-size: 0.7em; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-left: 6px; box-shadow: 0 0 5px rgba(233, 0, 82, 0.5); }
 
         .loading, .error { grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-dim); }
         .error { color: var(--pink); }
@@ -174,13 +138,7 @@
     const IDS = [210891, 733181, 3965890, 733812, 425659, 2154514, 423997];
     const PROXY_URL = "/api/proxy?endpoint=";
     
-    // Chip Display Names
-    const CHIPS = {
-        '3xc': 'Triple Captain',
-        'bboost': 'Bench Boost',
-        'freehit': 'Free Hit',
-        'wildcard': 'Wildcard'
-    };
+    const CHIPS = { '3xc': 'Triple Captain', 'bboost': 'Bench Boost', 'freehit': 'Free Hit', 'wildcard': 'Wildcard' };
 
     async function getData(endpoint) {
         const response = await fetch(PROXY_URL + encodeURIComponent(endpoint));
@@ -209,8 +167,7 @@
                     getData(`/entry/${managerId}/transfers/`)
                 ]);
 
-                // --- Active Chip? ---
-                const activeChip = picks.active_chip; // '3xc', 'bboost', etc.
+                const activeChip = picks.active_chip;
 
                 let gwScore = 0;
                 const squad = picks.picks.map(pick => {
@@ -223,19 +180,31 @@
                     return {
                         name: pStatic.web_name,
                         points: totalPoints,
-                        // Logic: Captain if mult=2, TC if mult=3
                         isCap: pick.multiplier === 2,
                         isTC: pick.multiplier === 3,
-                        isVice: pick.is_vice_captain,
                         mult: pick.multiplier
                     };
                 });
 
-                // Transfers Logic
+                // --- Enhanced Transfer Logic ---
                 const currentTransfers = transfersHistory.filter(t => t.event === GW).map(t => {
+                    // Get Names
+                    const pInStatic = staticData.elements.find(el => el.id === t.element_in);
+                    const pOutStatic = staticData.elements.find(el => el.id === t.element_out);
+                    
+                    // Get Live Points for Gain Calculation
+                    const pInLive = liveData.elements.find(el => el.id === t.element_in);
+                    const pOutLive = liveData.elements.find(el => el.id === t.element_out);
+                    
+                    const ptsIn = pInLive ? pInLive.stats.total_points : 0;
+                    const ptsOut = pOutLive ? pOutLive.stats.total_points : 0;
+                    
                     return {
-                        in: staticData.elements.find(el => el.id === t.element_in).web_name,
-                        out: staticData.elements.find(el => el.id === t.element_out).web_name
+                        inName: pInStatic.web_name,
+                        outName: pOutStatic.web_name,
+                        inPts: ptsIn,
+                        outPts: ptsOut,
+                        gain: ptsIn - ptsOut
                     };
                 });
 
@@ -269,52 +238,55 @@
     }
 
     function renderCard(team, gw) {
-        // --- Chip Label ---
+        // Chip
         let chipHtml = '';
         if(team.chip && CHIPS[team.chip]) {
             chipHtml = `<span class="chip-badge">${CHIPS[team.chip]}</span>`;
         }
 
-        // --- Transfers ---
+        // Transfers
         let transferHtml = '';
         if(team.transfers.length > 0) {
             const costDisplay = team.cost > 0 ? `<span class="cost-badge">-${team.cost}</span>` : '<span>FREE</span>';
+            
             let moves = '';
             team.transfers.forEach(tx => {
-                moves += `<div class="transfer-row"><span class="tx-in">+ ${tx.in}</span><span class="tx-out">${tx.out}</span></div>`;
+                // Determine gain color
+                let gainClass = 'gain-neu';
+                let gainPrefix = '';
+                if(tx.gain > 0) { gainClass = 'gain-pos'; gainPrefix = '+'; }
+                if(tx.gain < 0) { gainClass = 'gain-neg'; } // automatic minus sign from number
+
+                moves += `
+                    <div class="transfer-row">
+                        <div class="tx-details">
+                            <span class="tx-in">IN: ${tx.inName} <span class="tx-pts">(${tx.inPts})</span></span>
+                            <span class="tx-out">OUT: ${tx.outName} <span class="tx-pts">(${tx.outPts})</span></span>
+                        </div>
+                        <div class="tx-gain ${gainClass}">${gainPrefix}${tx.gain}</div>
+                    </div>`;
             });
-            transferHtml = `<div class="transfer-section"><div class="transfer-header"><span>Transfers</span>${costDisplay}</div>${moves}</div>`;
+            transferHtml = `<div class="transfer-section"><div class="transfer-header"><span>Transfers (Gain)</span>${costDisplay}</div>${moves}</div>`;
         } else {
              transferHtml = `<div class="transfer-section"><span class="no-transfers">No transfers</span></div>`;
         }
 
-        // --- Players ---
+        // Players
         let playersHtml = '';
         const starters = team.squad.filter(p => p.mult > 0);
         const bench = team.squad.filter(p => p.mult === 0);
 
         starters.forEach(p => {
-            // Determine Badge: TC, C, or none
             let badge = '';
             if (p.isTC) badge = '<span class="tc-badge">TC</span>';
             else if (p.isCap) badge = '<span class="cap-badge">C</span>';
 
-            playersHtml += `
-                <div class="player-row">
-                    <span>${p.name} ${badge}</span>
-                    <strong>${p.points}</strong>
-                </div>`;
+            playersHtml += `<div class="player-row"><span>${p.name} ${badge}</span><strong>${p.points}</strong></div>`;
         });
 
         if (bench.length > 0) {
             playersHtml += `<div class="bench-label">Bench</div>`;
-            bench.forEach(p => {
-                playersHtml += `
-                    <div class="player-row bench">
-                        <span>${p.name}</span>
-                        <strong>${p.points}</strong>
-                    </div>`;
-            });
+            bench.forEach(p => playersHtml += `<div class="player-row bench"><span>${p.name}</span><strong>${p.points}</strong></div>`);
         }
 
         return `
@@ -327,21 +299,17 @@
                     </div>
                     <a href="https://fantasy.premierleague.com/entry/${team.id}/event/${gw}" target="_blank" class="fpl-link">FPL ↗</a>
                 </div>
-                
                 <div class="score-board">
                     <div class="score-item"><span class="score-val">${team.score}</span><span class="score-lbl">Live GW</span></div>
                     <div class="score-item"><span class="score-val">${team.total}</span><span class="score-lbl">Total</span></div>
                 </div>
-
                 ${transferHtml}
-
                 <div class="player-list">${playersHtml}</div>
             </div>
         `;
     }
 
     init();
-
 </script>
 </body>
 </html>
